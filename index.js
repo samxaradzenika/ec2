@@ -1,3 +1,35 @@
+// Use this code snippet in your app.
+// If you need more information about configurations or implementing the sample code, visit the AWS docs:
+// https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/getting-started.html
+
+import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
+
+const secret_name = "secret2";
+
+const client = new SecretsManagerClient({
+  region: "us-east-1",
+});
+
+let response;
+
+try {
+  response = await client.send(
+    new GetSecretValueCommand({
+      SecretId: secret_name,
+      VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
+    })
+  );
+} catch (error) {
+  // For a list of exceptions thrown, see
+  // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+  throw error;
+}
+
+const secret = response.SecretString;
+
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -13,9 +45,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const secret_name = "backendsecrets";
-const client = new SecretsManagerClient({region: "us-east-1"});
-
 client
   .send(
     new GetSecretValueCommand({
@@ -26,11 +55,13 @@ client
   .then((response) => {
     const secret = response.SecretString;
     const {private_key, client_email} = JSON.parse(secret);
-    const privkey = private_key.split(String.raw`\n`).join("\n");
 
-    const googleAuthClient = new google.auth.JWT(client_email, null, privkey, [
-      "https://www.googleapis.com/auth/spreadsheets",
-    ]);
+    const googleAuthClient = new google.auth.JWT(
+      client_email,
+      null,
+      private_key,
+      ["https://www.googleapis.com/auth/spreadsheets"]
+    );
 
     googleAuthClient.authorize((err, tokens) => {
       if (err) {
@@ -70,7 +101,7 @@ client
           .json({errors: ["Error checking email validity"]});
       }
 
-      const sheets = google.sheets({version: "v4", auth: client});
+      const sheets = google.sheets({version: "v4", auth: googleAuthClient});
 
       try {
         await sheets.spreadsheets.values.append({
