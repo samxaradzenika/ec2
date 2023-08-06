@@ -2,7 +2,7 @@
 // If you need more information about configurations or implementing the sample code, visit the AWS docs:
 // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/getting-started.html
 
-const secret_name = "secret2";
+const secret_name = "secret3";
 
 const client = new SecretsManagerClient({
   region: "us-east-1",
@@ -49,7 +49,7 @@ client
   )
   .then((response) => {
     const secret = response.SecretString;
-    const {private_key, client_email} = JSON.parse(secret);
+    const {private_key, client_email, WHOISXML_API_KEY} = JSON.parse(secret);
 
     const googleAuthClient = new google.auth.JWT(
       client_email,
@@ -77,7 +77,7 @@ client
         const emailApiUrl = "https://emailverification.whoisxmlapi.com/api/v1";
         const emailApiResponse = await axios.get(emailApiUrl, {
           params: {
-            apiKey: process.env.WHOISXML_API_KEY,
+            apiKey: WHOISXML_API_KEY,
             emailAddress: companyEmail,
           },
         });
