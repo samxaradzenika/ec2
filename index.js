@@ -2,10 +2,10 @@
 // If you need more information about configurations or implementing the sample code, visit the AWS docs:
 // https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/getting-started.html
 
-const secret_name = "secret3";
+const secret_name = "Secret3";
 
 const client = new SecretsManagerClient({
-  region: "us-west-1c",
+  region: "us-west-1",
 });
 
 let response;
