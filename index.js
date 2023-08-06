@@ -5,7 +5,7 @@
 const secret_name = "secret3";
 
 const client = new SecretsManagerClient({
-  region: "us-east-1",
+  region: "us-west-1",
 });
 
 let response;
@@ -50,6 +50,10 @@ client
   .then((response) => {
     const secret = response.SecretString;
     const {private_key, client_email, WHOISXML_API_KEY} = JSON.parse(secret);
+    console.log(
+      "🚀 ~ file: index.js:53 ~ .then ~ WHOISXML_API_KEY:",
+      WHOISXML_API_KEY
+    );
 
     const googleAuthClient = new google.auth.JWT(
       client_email,
