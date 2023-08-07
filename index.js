@@ -50,10 +50,6 @@ client
   .then((response) => {
     const secret = response.SecretString;
     const {private_key, client_email, WHOISXML_API_KEY} = JSON.parse(secret);
-    console.log(
-      "🚀 ~ file: index.js:53 ~ .then ~ WHOISXML_API_KEY:",
-      WHOISXML_API_KEY
-    );
 
     const googleAuthClient = new google.auth.JWT(
       client_email,
@@ -118,5 +114,12 @@ client
       }
     });
   });
-
+app.get("/health_check", async (req, res) => {
+  try {
+    res.send("Health check is working correctly");
+  } catch (error) {
+    console.log("error", error);
+    throw error;
+  }
+});
 app.listen(5001, () => console.log("Server started on port 5001"));
