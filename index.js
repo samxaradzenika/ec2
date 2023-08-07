@@ -5,7 +5,7 @@
 const secret_name = "Secret3";
 
 const client = new SecretsManagerClient({
-  region: "us-west-1",
+  region: "us-east-1",
 });
 
 let response;
